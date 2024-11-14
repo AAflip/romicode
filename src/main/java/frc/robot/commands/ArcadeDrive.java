@@ -39,12 +39,19 @@ public class ArcadeDrive extends CommandBase {
   int wiggleTime;
   int autoTimer;
   // Called every time the scheduler runs while the command is scheduled.
+  static double trunc(double number, int place){
+    number = number * Math.pow(10, place); 
+    number = Math.floor(number); 
+    number = number / Math.pow(10, place); 
+    return number;
+  }
   @Override
   public void execute() {
     double gas = -m_controller.getRawAxis(5)+1;
     gas = gas>1 ? gas*2 : 1;
-    double steer = m_controller.getRawAxis(0);
-    if (Math.abs(steer) < 0.1) steer = m_controller.getRawAxis(3)*2-m_controller.getRawAxis(2)*2;
+    
+    double steer = trunc(m_controller.getRawAxis(0),1);
+    if (Math.abs(steer) < 0.1) steer = trunc(m_controller.getRawAxis(3),1)*2-trunc(m_controller.getRawAxis(2),1)*2;
     if(m_controller.getRawButton(6)) steer = 1;
     if(m_controller.getRawButton(5)) steer = -1;
     if(m_controller.getRawButton(3)){
@@ -53,7 +60,7 @@ public class ArcadeDrive extends CommandBase {
       steer = 1; 
       timer--;
     }
-    double move = m_controller.getRawAxis(1);
+    double move = trunc(m_controller.getRawAxis(1), 1);
     if(m_controller.getRawButton(1) && !m_controller.getRawButton(8)){
       autoTimer = 800000000;
     }else if(autoTimer > 0 && !m_controller.getRawButton(1) && !m_controller.getRawButton(8)){
